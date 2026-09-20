@@ -11,6 +11,17 @@ MAKE IT YOUR DEFAULT
 3. Select Use custom skin and choose Tokyo-Night-Dark.vlt.
 4. Save, fully quit VLC, and reopen it.
 
+MUSIC FEATURES
+Audio > Equalizer / Bass Boost opens VLC's ten-band equalizer and preamp.
+Start with Preamp at 0 dB or below before raising the bass bands.
+Drop music onto Try-Tokyo-Night-Music.cmd to try the themed projectM effects.
+Keep the included visualizations folder beside the launcher.
+For normal VLC use, set Preferences > All > Audio > Visualizations > projectM
+preset path to that folder, save and restart, then select
+Audio > Audio Options > Visualizations > projectM. Select Disable to turn off.
+See docs/audio.md for single-preset selection, customization, timed playlists,
+and the limits of DJ mixing in VLC.
+
 CONTROLS
 Top bar: Media, Playback, Audio, Video, Subtitles, Tools, View, Help,
 the full VLC menu, minimize, maximize/restore, close.

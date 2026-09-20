@@ -5,20 +5,23 @@
 - [x] Replace tiny background tiles that caused excessive drawing during resize.
 - [x] Remove the redundant idle background layer.
 - [x] Check player and playlist resizing, maximize/restore, and seek-bar alignment in VLC.
-- [ ] Confirm resize responsiveness in normal use after reloading the optimized skin.
+- [x] Confirm resize responsiveness in normal use after reloading the optimized skin (confirmed by user).
 - Prefer VLC's existing controls, dialogs, menus, and rendering features. Preserve the horizontal menu row.
 
-## Later: simple DJ features
+## Simple DJ features
 
-- [ ] Investigate track-to-track crossfades and simple transitions, clearly separating native VLC features from features that need a companion tool.
-- [ ] Expose or document VLC's native equalizer for bass boost.
-- [ ] Investigate timed track switches and per-track start/stop points.
-- [ ] Assess a two-player companion or a dedicated DJ application if native VLC cannot provide reliable mixing; do not burden the skin with an untested playback engine.
+- [x] Investigate crossfades: native playlist transitions are cuts; document Mixxx Auto DJ for overlapping fades.
+- [x] Expose VLC's native equalizer and preamp through Audio and Tools; document bass boost.
+- [x] Add a timed XSPF playlist helper with per-track start/stop points; verify options in VLC.
+- [x] Assess a two-player companion: defer a custom engine in favor of a dedicated DJ application for reliable mixing. See docs/audio.md.
 
-## Later: audio visualization customization
+## Audio visualization customization
 
-- [ ] Add Tokyo Night blue/purple visualizations on the dark background, without branding, captions, or emojis.
-- [ ] Prefer the installed projectM plugin and compatible presets; validate loading, audio response, embedding, and performance in VLC before shipping.
-- [ ] Add documented preset selection and customization, with an easy return to VLC's default visualization settings.
+- [x] Add blue Waves and purple Orbit on the Tokyo Night background without branding, captions, or emojis.
+- [x] Use the installed projectM plugin; verify loading, visible animation and embedded rendering during resize in VLC 3.0.23 on Windows.
+- [x] Document preset selection, customization, disabling and restoring the previous preset path.
 
-DJ and visualization work is deferred until the current optimization work is settled.
+## Follow-up validation
+
+- [ ] User feedback on visualization appearance and equalizer controls.
+- [ ] Test Linux Skins2/projectM compatibility; currently only Windows is verified.

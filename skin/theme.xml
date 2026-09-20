@@ -104,6 +104,12 @@
   <Bitmap id="knob" file="knob.png" alphacolor="#ff00ff"/>
   <Bitmap id="knob_over" file="knob_over.png" alphacolor="#ff00ff"/>
   <Bitmap id="vol_knob" file="vol_knob.png" alphacolor="#ff00ff"/>
+  <Bitmap id="eq_disabled_up" file="eq_disabled_up.png" alphacolor="#ff00ff"/>
+  <Bitmap id="eq_disabled_over" file="eq_disabled_over.png" alphacolor="#ff00ff"/>
+  <Bitmap id="eq_disabled_down" file="eq_disabled_down.png" alphacolor="#ff00ff"/>
+  <Bitmap id="eq_enabled_up" file="eq_enabled_up.png" alphacolor="#ff00ff"/>
+  <Bitmap id="eq_enabled_over" file="eq_enabled_over.png" alphacolor="#ff00ff"/>
+  <Bitmap id="eq_enabled_down" file="eq_enabled_down.png" alphacolor="#ff00ff"/>
   <Bitmap id="scroll" file="scroll.png" alphacolor="#ff00ff"/>
   <Bitmap id="resize" file="resize.png" alphacolor="#ff00ff"/>
   <Bitmap id="seek" file="seek.png" alphacolor="#ff00ff"/>
@@ -135,7 +141,8 @@
     <MenuItem label="Navigation and Playback Options..." action="dialogs.miscPopup()"/>
   </PopupMenu>
   <PopupMenu id="audio_menu">
-    <MenuItem label="Audio Track and Channels..." action="dialogs.audioPopup()"/>
+    <MenuItem label="Equalizer / Bass Boost..." action="eq.show()"/>
+    <MenuItem label="Audio Options..." action="dialogs.audioPopup()"/>
     <MenuSeparator/>
     <MenuItem label="Mute / Unmute" action="vlc.mute()"/>
     <MenuItem label="Increase Volume" action="vlc.volumeUp()"/>
@@ -149,6 +156,7 @@
     <MenuItem label="Video Settings..." action="dialogs.videoPopup()"/>
   </PopupMenu>
   <PopupMenu id="tools_menu">
+    <MenuItem label="Equalizer..." action="eq.show()"/>
     <MenuItem label="Media Information..." action="dialogs.fileInfo()"/>
     <MenuItem label="Messages..." action="dialogs.messages()"/>
     <MenuSeparator/>
@@ -167,7 +175,7 @@
   <Window id="main" x="160" y="100" dragdrop="true" playondrop="true">
     <Layout id="mainLayout" width="960" height="644" minwidth="800" minheight="470" maxwidth="7680" maxheight="4320">
       <Image image="bg" x="0" y="0" lefttop="lefttop" rightbottom="rightbottom" width="960" height="644"/>
-      <Video x="8" y="48" width="944" height="452" rightbottom="rightbottom" autoresize="false" visible="vlc.hasVout"/>
+      <Video x="8" y="48" width="944" height="452" rightbottom="rightbottom" autoresize="false" visible="not vlc.isStopped"/>
       <Image image="panel" x="0" y="0" lefttop="lefttop" rightbottom="righttop" action="move" action2="main.maximize()" visible="not main.isMaximized" width="960" height="48"/>
       <Image image="panel" x="0" y="0" lefttop="lefttop" rightbottom="righttop" action="move" action2="main.unmaximize()" visible="main.isMaximized" width="960" height="48"/>
       <Image image="brand" x="0" y="0" lefttop="lefttop" rightbottom="lefttop"/>
@@ -255,6 +263,65 @@
       </Slider>
       <Slider x="749" y="94" points="(0,0),(102,0)" up="vol_knob" over="knob_over" down="knob_over" thickness="18" tooltiptext="Volume: $V%" value="volume" lefttop="rightbottom" rightbottom="rightbottom" visible="true"/>
       <Button x="884" y="74" up="fullscreen_up" over="fullscreen_over" down="fullscreen_down" action="vlc.fullscreen()" tooltiptext="Fullscreen (F / Esc)" lefttop="rightbottom" rightbottom="rightbottom"/>
+    </Layout>
+  </Window>
+  <Window id="eq" x="260" y="180" visible="false">
+    <Layout id="eqLayout" width="640" height="324">
+      <Image image="bg" x="0" y="0" lefttop="lefttop" rightbottom="lefttop" width="640" height="324"/>
+      <Image image="panel" x="0" y="0" lefttop="lefttop" rightbottom="lefttop" action="move" width="640" height="48"/>
+      <Text text="EQUALIZER" x="20" y="17" width="170" font="defaultfont" color="#c0caf5" lefttop="lefttop" rightbottom="lefttop" focus="false"/>
+      <Text text="On" x="200" y="17" width="80" font="defaultfont" color="#7aa2f7" lefttop="lefttop" rightbottom="lefttop" focus="false" visible="equalizer.isEnabled"/>
+      <Text text="Off" x="200" y="17" width="80" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" visible="not equalizer.isEnabled"/>
+      <Checkbox x="476" y="8" state="equalizer.isEnabled" up1="eq_disabled_up" over1="eq_disabled_over" down1="eq_disabled_down" up2="eq_enabled_up" over2="eq_enabled_over" down2="eq_enabled_down" action1="equalizer.enable()" action2="equalizer.disable()" tooltiptext1="Enable equalizer" tooltiptext2="Disable equalizer" lefttop="lefttop" rightbottom="lefttop"/>
+      <Button x="596" y="4" up="close_up" over="close_over" down="close_down" action="eq.hide()" tooltiptext="Close equalizer" lefttop="lefttop" rightbottom="lefttop"/>
+      <Text text="+20" x="12" y="91" width="42" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false"/>
+      <Text text="0 dB" x="12" y="161" width="42" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false"/>
+      <Text text="-20" x="12" y="231" width="42" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false"/>
+      <Image image="line" x="74" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="69" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="74" y="94" points="(0,140),(0,0)" up="vol_knob" over="knob_over" value="equalizer.preamp" thickness="14" tooltiptext="Preamp (-20 to +20 dB)"/>
+      <Text text="Preamp" x="50" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Image image="line" x="142" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="137" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="142" y="94" points="(0,140),(0,0)" up="knob" over="knob_over" value="equalizer.band(0)" thickness="14" tooltiptext="60 (-20 to +20 dB)"/>
+      <Text text="60" x="118" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Image image="line" x="189" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="184" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="189" y="94" points="(0,140),(0,0)" up="knob" over="knob_over" value="equalizer.band(1)" thickness="14" tooltiptext="170 (-20 to +20 dB)"/>
+      <Text text="170" x="165" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Image image="line" x="236" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="231" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="236" y="94" points="(0,140),(0,0)" up="knob" over="knob_over" value="equalizer.band(2)" thickness="14" tooltiptext="310 (-20 to +20 dB)"/>
+      <Text text="310" x="212" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Image image="line" x="283" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="278" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="283" y="94" points="(0,140),(0,0)" up="knob" over="knob_over" value="equalizer.band(3)" thickness="14" tooltiptext="600 (-20 to +20 dB)"/>
+      <Text text="600" x="259" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Image image="line" x="330" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="325" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="330" y="94" points="(0,140),(0,0)" up="knob" over="knob_over" value="equalizer.band(4)" thickness="14" tooltiptext="1k (-20 to +20 dB)"/>
+      <Text text="1k" x="306" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Image image="line" x="377" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="372" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="377" y="94" points="(0,140),(0,0)" up="knob" over="knob_over" value="equalizer.band(5)" thickness="14" tooltiptext="3k (-20 to +20 dB)"/>
+      <Text text="3k" x="353" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Image image="line" x="424" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="419" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="424" y="94" points="(0,140),(0,0)" up="knob" over="knob_over" value="equalizer.band(6)" thickness="14" tooltiptext="6k (-20 to +20 dB)"/>
+      <Text text="6k" x="400" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Image image="line" x="471" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="466" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="471" y="94" points="(0,140),(0,0)" up="knob" over="knob_over" value="equalizer.band(7)" thickness="14" tooltiptext="12k (-20 to +20 dB)"/>
+      <Text text="12k" x="447" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Image image="line" x="518" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="513" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="518" y="94" points="(0,140),(0,0)" up="knob" over="knob_over" value="equalizer.band(8)" thickness="14" tooltiptext="14k (-20 to +20 dB)"/>
+      <Text text="14k" x="494" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Image image="line" x="565" y="94" lefttop="lefttop" rightbottom="lefttop" width="2" height="140"/>
+      <Image image="line" x="560" y="164" lefttop="lefttop" rightbottom="lefttop" width="12" height="2"/>
+      <Slider x="565" y="94" points="(0,140),(0,0)" up="knob" over="knob_over" value="equalizer.band(9)" thickness="14" tooltiptext="16k (-20 to +20 dB)"/>
+      <Text text="16k" x="541" y="250" width="48" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false" alignment="center"/>
+      <Text text="Bass: raise 60 / 170 Hz. Lower Preamp if the sound distorts." x="24" y="292" width="590" font="defaultfont" color="#9aa5ce" lefttop="lefttop" rightbottom="lefttop" focus="false"/>
     </Layout>
   </Window>
   <Window id="help_window" x="260" y="180" visible="false">

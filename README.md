@@ -38,12 +38,21 @@ The `.vlt` contains XML and PNG assets and uses VLC's installed default font. Fi
 
 See [the bundled instructions](dist/README.txt) for more details.
 
+## Music features
+
+- **Audio → Equalizer / Bass Boost** controls VLC's ten-band equalizer and preamp.
+- The bundle includes Tokyo Night **Waves** and **Orbit** projectM presets and a Windows music launcher. Choose one preset or let projectM cycle them.
+- `tools/make_timed_playlist.py` creates playlists with native VLC start/stop points for timed track cuts.
+
+See [music setup and controls](docs/audio.md) for installation, customization and timed-playlist examples. Smooth overlapping crossfades require a separate DJ player; the guide explains the available options.
+
 ## Build and customize
 
 Python 3.9 or later is required.
 
 ```sh
 python -m pip install -r requirements.txt
+python tools/build_visualizations.py
 python tools/build_skin.py
 ```
 

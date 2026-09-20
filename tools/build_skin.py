@@ -115,6 +115,12 @@ for label,w,action in MENUS:
         save('nav_'+label.lower()+'_'+state,im)
 for name,col in [('knob',C['blue']),('knob_over',C['cyan']),('vol_knob',C['purple'])]:
     im,d=canvas(14,14); d.ellipse((2*S,2*S,12*S,12*S),fill=col);save(name,im)
+for name,label in [('eq_disabled','Enable'),('eq_enabled','Disable')]:
+    for state in ('up','over','down'):
+        im,d=canvas(104,32,C['panel'])
+        rect(d,(1,1,103,31),C['raised'] if state=='up' else C['line'],5)
+        txt(d,(52,16),label,13,C['fg'],'mm')
+        save(name+'_'+state,im)
 im,d=canvas(12,34);rect(d,(3,0,9,33),C['muted'],3);save('scroll',im)
 im,d=canvas(28,28,C['panel'])
 for n in (10,16,22): line(d,[(n,24),(24,n)],C['muted'],1)
@@ -159,7 +165,8 @@ popup('playback_menu',[
     ('Faster','vlc.faster()'), ('Slower','vlc.slower()'), ('Next Frame','vlc.nextFrame()'),
     None, ('Navigation and Playback Options...','dialogs.miscPopup()')])
 popup('audio_menu',[
-    ('Audio Track and Channels...','dialogs.audioPopup()'), None,
+    ('Equalizer / Bass Boost...','eq.show()'),
+    ('Audio Options...','dialogs.audioPopup()'), None,
     ('Mute / Unmute','vlc.mute()'), ('Increase Volume','vlc.volumeUp()'),
     ('Decrease Volume','vlc.volumeDown()')])
 popup('video_menu',[
@@ -167,6 +174,7 @@ popup('video_menu',[
     ('Take Snapshot','vlc.snapshot()'), None,
     ('Video Settings...','dialogs.videoPopup()')])
 popup('tools_menu',[
+    ('Equalizer...','eq.show()'),
     ('Media Information...','dialogs.fileInfo()'), ('Messages...','dialogs.messages()'),
     None, ('Preferences...','dialogs.prefs()'), ('Change Skin...','dialogs.changeSkin()')])
 popup('view_menu',[
@@ -232,7 +240,9 @@ win=el(theme,'Window',id='main',x=160,y=100,dragdrop='true',playondrop='true')
 layout=el(win,'Layout',id='mainLayout',width=960,height=644,minwidth=800,minheight=470,maxwidth=7680,maxheight=4320)
 image(layout,'bg',0,0,960,644,rb='rightbottom')
 # The opaque background already supplies the plain idle video area.
-el(layout,'Video',x=8,y=48,width=944,height=452,rightbottom='rightbottom',autoresize='false',visible='vlc.hasVout')
+# Keep the native video host available for projectM's direct OpenGL surface,
+# which does not set vlc.hasVout like a decoded video does.
+el(layout,'Video',x=8,y=48,width=944,height=452,rightbottom='rightbottom',autoresize='false',visible='not vlc.isStopped')
 image(layout,'panel',0,0,960,48,rb='righttop',action='move',action2='main.maximize()',visible='not main.isMaximized')
 image(layout,'panel',0,0,960,48,rb='righttop',action='move',action2='main.unmaximize()',visible='main.isMaximized')
 image(layout,'brand',0,0)
@@ -266,6 +276,25 @@ resize_handles(p,440,480)
 win=el(theme,'Window',id='fullscreenController',position='South',ymargin=24,visible='false')
 p=el(win,'Layout',id='fullscreenLayout',width=960,height=144)
 controls(p,0)
+
+win=el(theme,'Window',id='eq',x=260,y=180,visible='false')
+p=el(win,'Layout',id='eqLayout',width=640,height=324)
+image(p,'bg',0,0,640,324)
+image(p,'panel',0,0,640,48,action='move')
+text(p,'EQUALIZER',20,17,170,'fg')
+text(p,'On',200,17,80,'blue',visible='equalizer.isEnabled')
+text(p,'Off',200,17,80,'muted',visible='not equalizer.isEnabled')
+check(p,'eq_disabled','eq_enabled',476,8,'equalizer.isEnabled','equalizer.enable()','equalizer.disable()','Enable equalizer','Disable equalizer')
+button(p,'close',596,4,'eq.hide()','Close equalizer')
+for label,y in [('+20',91),('0 dB',161),('-20',231)]:text(p,label,12,y,42,'muted')
+for i,label in enumerate(['Preamp','60','170','310','600','1k','3k','6k','12k','14k','16k']):
+    x=74 if i==0 else 142+(i-1)*47
+    image(p,'line',x,94,2,140)
+    image(p,'line',x-5,164,12,2)
+    value='equalizer.preamp' if i==0 else f'equalizer.band({i-1})'
+    el(p,'Slider',x=x,y=94,points='(0,140),(0,0)',up='vol_knob' if i==0 else 'knob',over='knob_over',value=value,thickness=14,tooltiptext=label+' (-20 to +20 dB)')
+    text(p,label,x-24,250,48,'muted',alignment='center')
+text(p,'Bass: raise 60 / 170 Hz. Lower Preamp if the sound distorts.',24,292,590,'muted')
 
 win=el(theme,'Window',id='help_window',x=260,y=180,visible='false')
 p=el(win,'Layout',id='helpLayout',width=440,height=320)
@@ -309,7 +338,12 @@ print('All bitmap references and PNG files valid.')
 print(OUT/'Tokyo-Night-Dark.vlt')
 
 with zipfile.ZipFile(OUT/'Tokyo-Night-VLC.zip','w',zipfile.ZIP_DEFLATED) as bundle:
-    for filename in ('Tokyo-Night-Dark.vlt','Try-Tokyo-Night.cmd','README.txt'):
+    for filename in ('Tokyo-Night-Dark.vlt','Try-Tokyo-Night.cmd','Try-Tokyo-Night-Music.cmd','README.txt'):
         bundle.write(OUT/filename,filename)
     bundle.write(ROOT/'docs/preview.png','Tokyo-Night-Preview.png')
+    for path in sorted((ROOT/'visualizations').rglob('*.milk')):
+        bundle.write(path,path.relative_to(ROOT).as_posix())
+    for filename in ('audio.md','equalizer.png','visualization-waves.png','visualization-orbit.png'):
+        bundle.write(ROOT/'docs'/filename,'docs/'+filename)
+    bundle.write(ROOT/'tools/make_timed_playlist.py','tools/make_timed_playlist.py')
 print(OUT/'Tokyo-Night-VLC.zip')
