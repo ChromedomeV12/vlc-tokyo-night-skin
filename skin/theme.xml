@@ -62,6 +62,9 @@
   <Bitmap id="maximize_up" file="maximize_up.png" alphacolor="#ff00ff"/>
   <Bitmap id="maximize_over" file="maximize_over.png" alphacolor="#ff00ff"/>
   <Bitmap id="maximize_down" file="maximize_down.png" alphacolor="#ff00ff"/>
+  <Bitmap id="restore_up" file="restore_up.png" alphacolor="#ff00ff"/>
+  <Bitmap id="restore_over" file="restore_over.png" alphacolor="#ff00ff"/>
+  <Bitmap id="restore_down" file="restore_down.png" alphacolor="#ff00ff"/>
   <Bitmap id="menu_up" file="menu_up.png" alphacolor="#ff00ff"/>
   <Bitmap id="menu_over" file="menu_over.png" alphacolor="#ff00ff"/>
   <Bitmap id="menu_down" file="menu_down.png" alphacolor="#ff00ff"/>
@@ -163,9 +166,10 @@
   <Window id="main" x="160" y="100" dragdrop="true" playondrop="true">
     <Layout id="mainLayout" width="960" height="644" minwidth="800" minheight="470" maxwidth="7680" maxheight="4320">
       <Image image="bg" x="0" y="0" lefttop="lefttop" rightbottom="rightbottom" width="960" height="644"/>
-      <Image image="idle" x="4" y="48" lefttop="lefttop" rightbottom="rightbottom" resize="scale2" visible="not vlc.hasVout" width="952" height="452"/>
-      <Video x="4" y="48" width="952" height="452" rightbottom="rightbottom" autoresize="false" visible="vlc.hasVout"/>
-      <Image image="panel" x="0" y="0" lefttop="lefttop" rightbottom="righttop" action="move" action2="main.maximize()" width="960" height="48"/>
+      <Image image="idle" x="8" y="48" lefttop="lefttop" rightbottom="rightbottom" resize="scale2" visible="not vlc.hasVout" width="944" height="452"/>
+      <Video x="8" y="48" width="944" height="452" rightbottom="rightbottom" autoresize="false" visible="vlc.hasVout"/>
+      <Image image="panel" x="0" y="0" lefttop="lefttop" rightbottom="righttop" action="move" action2="main.maximize()" visible="not main.isMaximized" width="960" height="48"/>
+      <Image image="panel" x="0" y="0" lefttop="lefttop" rightbottom="righttop" action="move" action2="main.unmaximize()" visible="main.isMaximized" width="960" height="48"/>
       <Image image="brand" x="0" y="0" lefttop="lefttop" rightbottom="lefttop"/>
       <Button x="12" y="4" up="nav_media_up" over="nav_media_over" down="nav_media_down" action="media_menu.show()" tooltiptext="Media" lefttop="lefttop" rightbottom="lefttop"/>
       <Button x="74" y="4" up="nav_playback_up" over="nav_playback_over" down="nav_playback_down" action="playback_menu.show()" tooltiptext="Playback" lefttop="lefttop" rightbottom="lefttop"/>
@@ -177,7 +181,7 @@
       <Button x="470" y="4" up="nav_help_up" over="nav_help_over" down="nav_help_down" action="help_window.show()" tooltiptext="Help" lefttop="lefttop" rightbottom="lefttop"/>
       <Button x="792" y="4" up="menu_up" over="menu_over" down="menu_down" action="dialogs.popup()" tooltiptext="VLC menu" lefttop="righttop" rightbottom="righttop"/>
       <Button x="834" y="4" up="minimize_up" over="minimize_over" down="minimize_down" action="vlc.minimize()" tooltiptext="Minimize" lefttop="righttop" rightbottom="righttop"/>
-      <Checkbox x="876" y="4" state="main.isMaximized" up1="maximize_up" over1="maximize_over" down1="maximize_down" up2="maximize_up" over2="maximize_over" down2="maximize_down" action1="main.maximize()" action2="main.unmaximize()" tooltiptext1="Maximize" tooltiptext2="Restore" lefttop="righttop" rightbottom="righttop"/>
+      <Checkbox x="876" y="4" state="main.isMaximized" up1="maximize_up" over1="maximize_over" down1="maximize_down" up2="restore_up" over2="restore_over" down2="restore_down" action1="main.maximize()" action2="main.unmaximize()" tooltiptext1="Maximize" tooltiptext2="Restore" lefttop="righttop" rightbottom="righttop"/>
       <Button x="918" y="4" up="close_up" over="close_over" down="close_down" action="vlc.quit()" tooltiptext="Close" lefttop="righttop" rightbottom="righttop"/>
       <Image image="panel" x="0" y="500" lefttop="leftbottom" rightbottom="rightbottom" action="move" width="960" height="144"/>
       <Image image="line" x="0" y="500" lefttop="leftbottom" rightbottom="rightbottom" width="960" height="1"/>
@@ -200,7 +204,9 @@
         <SliderBackground image="volume_track" nbvert="101"/>
       </Slider>
       <Button x="884" y="574" up="fullscreen_up" over="fullscreen_over" down="fullscreen_down" action="vlc.fullscreen()" tooltiptext="Fullscreen (F / Esc)" lefttop="rightbottom" rightbottom="rightbottom"/>
-      <Image image="resize" x="940" y="624" lefttop="rightbottom" rightbottom="rightbottom" action="resizeSE" help="Drag to resize"/>
+      <Image image="panel" x="952" y="48" lefttop="righttop" rightbottom="rightbottom" action="resizeE" help="Drag right edge to resize width" width="8" height="568"/>
+      <Image image="panel" x="0" y="636" lefttop="leftbottom" rightbottom="rightbottom" action="resizeS" help="Drag bottom edge to resize height" width="932" height="8"/>
+      <Image image="resize" x="932" y="616" lefttop="rightbottom" rightbottom="rightbottom" action="resizeSE" help="Drag corner to resize width and height"/>
     </Layout>
   </Window>
   <Window id="queue" x="1135" y="100" visible="false">
@@ -217,7 +223,9 @@
       <Button x="60" y="430" up="remove_up" over="remove_over" down="remove_down" action="playlist.del()" tooltiptext="Remove selected" lefttop="leftbottom" rightbottom="leftbottom"/>
       <Button x="104" y="430" up="save_up" over="save_over" down="save_down" action="playlist.save()" tooltiptext="Save playlist" lefttop="leftbottom" rightbottom="leftbottom"/>
       <Text text="Double-click to play" x="164" y="444" width="150" font="defaultfont" color="#9aa5ce" lefttop="leftbottom" rightbottom="leftbottom" focus="false"/>
-      <Image image="resize" x="420" y="460" lefttop="rightbottom" rightbottom="rightbottom" action="resizeSE"/>
+      <Image image="panel" x="432" y="48" lefttop="righttop" rightbottom="rightbottom" action="resizeE" help="Drag right edge to resize width" width="8" height="404"/>
+      <Image image="panel" x="0" y="472" lefttop="leftbottom" rightbottom="rightbottom" action="resizeS" help="Drag bottom edge to resize height" width="412" height="8"/>
+      <Image image="resize" x="412" y="452" lefttop="rightbottom" rightbottom="rightbottom" action="resizeSE" help="Drag corner to resize width and height"/>
     </Layout>
   </Window>
   <Window id="fullscreenController" position="South" ymargin="24" visible="false">

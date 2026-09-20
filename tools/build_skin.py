@@ -86,6 +86,9 @@ def icon(name,state):
         line(d,[(14,14),(26,26)],col); line(d,[(26,14),(14,26)],col)
     elif kind=='minimize': line(d,[(13,24),(27,24)],col)
     elif kind=='maximize': rect(d,(13,13,27,27),None,1,col)
+    elif kind=='restore':
+        line(d,[(17,13),(28,13),(28,24),(25,24)],col)
+        rect(d,(12,17,24,29),None,1,col)
     elif kind=='menu':
         for x in (13,20,27): d.ellipse(((x-1)*S,19*S,(x+1)*S,21*S),fill=col)
     elif kind=='add':
@@ -95,7 +98,7 @@ def icon(name,state):
         rect(d,(12,11,28,29),None,2,col); rect(d,(16,11,24,17),col); rect(d,(16,23,24,29),None,0,col)
     return save(name+'_'+state,im)
 
-for name in ['play','pause','previous','next','stop','open','playlist','playlist_on','volume','mute','fullscreen','shuffle','shuffle_on','repeat','repeat_on','close','minimize','maximize','menu','add','remove','save']:
+for name in ['play','pause','previous','next','stop','open','playlist','playlist_on','volume','mute','fullscreen','shuffle','shuffle_on','repeat','repeat_on','close','minimize','maximize','restore','menu','add','remove','save']:
     for state in ('up','over','down'): icon(name,state)
 MENUS = [('Media',62,'media_menu.show()'), ('Playback',84,'playback_menu.show()'),
          ('Audio',60,'audio_menu.show()'), ('Video',60,'video_menu.show()'),
@@ -110,8 +113,8 @@ for label,w,action in MENUS:
 for name,col in [('knob',C['blue']),('knob_over',C['cyan']),('vol_knob',C['purple'])]:
     im,d=canvas(14,14); d.ellipse((2*S,2*S,12*S,12*S),fill=col);save(name,im)
 im,d=canvas(12,34);rect(d,(3,0,9,33),C['muted'],3);save('scroll',im)
-im,d=canvas(20,20,C['panel'])
-for n in (5,10,15): line(d,[(n,17),(17,n)],C['muted'],1)
+im,d=canvas(28,28,C['panel'])
+for n in (10,16,22): line(d,[(n,24),(24,n)],C['muted'],1)
 save('resize',im)
 # Filled tracks in 101 frames, with the handle centered on the line.
 for name,w,col in [('seek',904,C['blue']),('volume_track',116,C['purple'])]:
@@ -167,6 +170,16 @@ def button(parent,name,x,y,action,tip,lt='lefttop',**kw):
     return el(parent,'Button',x=x,y=y,up=name+'_up',over=name+'_over',down=name+'_down',action=action,tooltiptext=tip,lefttop=lt,rightbottom=lt,**kw)
 def check(parent,a,b,x,y,state,act1,act2,tip1,tip2,lt='lefttop'):
     return el(parent,'Checkbox',x=x,y=y,state=state,up1=a+'_up',over1=a+'_over',down1=a+'_down',up2=b+'_up',over2=b+'_over',down2=b+'_down',action1=act1,action2=act2,tooltiptext1=tip1,tooltiptext2=tip2,lefttop=lt,rightbottom=lt)
+def resize_handles(parent,width,height):
+    # Skins2 exposes east, south, and southeast resize actions. Keep these
+    # opaque hit areas outside native video controls, which receive mouse
+    # input before skin controls. Add last so other skin controls cannot mask them.
+    image(parent,'panel',width-8,48,8,height-76,lt='righttop',rb='rightbottom',
+          action='resizeE',help='Drag right edge to resize width')
+    image(parent,'panel',0,height-8,width-28,8,lt='leftbottom',rb='rightbottom',
+          action='resizeS',help='Drag bottom edge to resize height')
+    image(parent,'resize',width-28,height-28,lt='rightbottom',
+          action='resizeSE',help='Drag corner to resize width and height')
 def controls(p,y):
     image(p,'panel',0,y,960,144,lt='leftbottom',rb='rightbottom',action='move')
     image(p,'line',0,y,960,1,lt='leftbottom',rb='rightbottom')
@@ -192,9 +205,10 @@ def controls(p,y):
 win=el(theme,'Window',id='main',x=160,y=100,dragdrop='true',playondrop='true')
 layout=el(win,'Layout',id='mainLayout',width=960,height=644,minwidth=800,minheight=470,maxwidth=7680,maxheight=4320)
 image(layout,'bg',0,0,960,644,rb='rightbottom')
-image(layout,'idle',4,48,952,452,rb='rightbottom',resize='scale2',visible='not vlc.hasVout')
-el(layout,'Video',x=4,y=48,width=952,height=452,rightbottom='rightbottom',autoresize='false',visible='vlc.hasVout')
-image(layout,'panel',0,0,960,48,rb='righttop',action='move',action2='main.maximize()')
+image(layout,'idle',8,48,944,452,rb='rightbottom',resize='scale2',visible='not vlc.hasVout')
+el(layout,'Video',x=8,y=48,width=944,height=452,rightbottom='rightbottom',autoresize='false',visible='vlc.hasVout')
+image(layout,'panel',0,0,960,48,rb='righttop',action='move',action2='main.maximize()',visible='not main.isMaximized')
+image(layout,'panel',0,0,960,48,rb='righttop',action='move',action2='main.unmaximize()',visible='main.isMaximized')
 image(layout,'brand',0,0)
 x=12
 for label,w,action in MENUS:
@@ -203,10 +217,10 @@ for label,w,action in MENUS:
     x+=w
 button(layout,'menu',792,4,'dialogs.popup()','VLC menu','righttop')
 button(layout,'minimize',834,4,'vlc.minimize()','Minimize','righttop')
-check(layout,'maximize','maximize',876,4,'main.isMaximized','main.maximize()','main.unmaximize()','Maximize','Restore','righttop')
+check(layout,'maximize','restore',876,4,'main.isMaximized','main.maximize()','main.unmaximize()','Maximize','Restore','righttop')
 button(layout,'close',918,4,'vlc.quit()','Close','righttop')
 controls(layout,500)
-image(layout,'resize',940,624,lt='rightbottom',action='resizeSE',help='Drag to resize')
+resize_handles(layout,960,644)
 
 win=el(theme,'Window',id='queue',x=1135,y=100,visible='false')
 p=el(win,'Layout',id='queueLayout',width=440,height=480,minwidth=320,minheight=280,maxwidth=1600,maxheight=2000)
@@ -221,7 +235,7 @@ button(p,'add',16,430,'playlist.add()','Add media','leftbottom')
 button(p,'remove',60,430,'playlist.del()','Remove selected','leftbottom')
 button(p,'save',104,430,'playlist.save()','Save playlist','leftbottom')
 text(p,'Double-click to play',164,444,150,'muted','leftbottom')
-image(p,'resize',420,460,lt='rightbottom',action='resizeSE')
+resize_handles(p,440,480)
 
 win=el(theme,'Window',id='fullscreenController',position='South',ymargin=24,visible='false')
 p=el(win,'Layout',id='fullscreenLayout',width=960,height=144)

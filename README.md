@@ -30,7 +30,7 @@ The `.vlt` contains XML and PNG assets and uses VLC's installed default font. Fi
 
 - Top row: Media, Playback, Audio, Video, Subtitles, Tools, View, Help, the full VLC menu, and window controls.
 - Bottom row: open, play/pause, previous, next, stop, shuffle, loop playlist, playlist toggle, mute, volume, and fullscreen.
-- Drag the title-bar space to move the window; drag the bottom-right grip to resize it. The default size is 960 × 644, with a minimum of 800 × 470.
+- Drag the title-bar space to move the window; double-click it to maximize or restore. Drag the right edge to change width, the bottom edge to change height, or the larger bottom-right grip to change both. These resize controls also work on the playlist. The player defaults to 960 × 644, with a minimum of 800 × 470. Skins2 does not provide top/left edge resize actions.
 - Double-click a playlist entry to play it. The playlist includes add, remove, save, and scroll controls.
 - In fullscreen, press **I** or click the middle mouse button to toggle the controller. **F / Esc** enters or leaves fullscreen; **Space** toggles playback.
 
@@ -62,6 +62,15 @@ tar -czf dist/Tokyo-Night-Dark.vlt -C skin .
 ```
 
 The screenshot in `docs/preview.png` is captured from VLC and is updated separately from the build.
+
+To check resizing in a separate VLC instance on Windows without saving preferences:
+
+```sh
+python tools/verify_resize_windows.py
+python tools/verify_resize_windows.py --media path/to/test-video.mp4
+```
+
+This integration check sends mouse messages to its own VLC windows and verifies right-edge, bottom-edge, and corner drags in both directions, including minimum sizes, for the player and playlist.
 
 ## Credits
 

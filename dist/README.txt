@@ -23,7 +23,10 @@ Bottom row: open, play/pause, previous, next, stop, shuffle, loop playlist,
 show/hide playlist, mute, volume, fullscreen.
 Seek by clicking or dragging the blue seek bar while playing seekable media.
 The purple slider controls volume. Hover for the percentage.
-Drag the title bar to move; drag the lower-right grip to resize.
+Drag the title bar to move; double-click it to maximize or restore.
+Resize from the right edge, bottom edge,
+or larger lower-right grip on either the player or playlist window.
+Skins2 does not provide top/left edge resize actions.
 The playlist has add, remove-selected, and save buttons plus a scrollbar.
 Double-click a playlist entry to play it.
 In fullscreen, use F or Esc to leave; use I or the middle mouse button to
