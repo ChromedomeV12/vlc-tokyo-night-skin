@@ -36,8 +36,11 @@ def txt(d,xy,text,size,color,anchor=None):
 def save(name,im):
     im=im.resize((im.width//S,im.height//S),Image.Resampling.LANCZOS)
     im.save(SKIN/(name+'.png')); assets[name]=im; return name
-for name,col in [('bg',C['bg']),('panel',C['panel']),('line',C['line']),('raised',C['raised'])]:
-    im,d=canvas(2,2,col); save(name,im)
+# VLC mosaics Images by default, issuing a native draw for every tile.
+# Large solid tiles avoid hundreds of thousands of 2x2 blits per resize.
+for name,col,w,h in [('bg',C['bg'],1024,1024),('panel',C['panel'],1024,144),
+                     ('line',C['line'],2048,2),('raised',C['raised'],40,40)]:
+    im,d=canvas(w,h,col); save(name,im)
 im,d=canvas(155,48,C['panel'])
 save('brand',im)
 im,d=canvas(952,452,C['bg'])
@@ -228,7 +231,7 @@ def controls(p,y):
 win=el(theme,'Window',id='main',x=160,y=100,dragdrop='true',playondrop='true')
 layout=el(win,'Layout',id='mainLayout',width=960,height=644,minwidth=800,minheight=470,maxwidth=7680,maxheight=4320)
 image(layout,'bg',0,0,960,644,rb='rightbottom')
-image(layout,'idle',8,48,944,452,rb='rightbottom',resize='scale2',visible='not vlc.hasVout')
+# The opaque background already supplies the plain idle video area.
 el(layout,'Video',x=8,y=48,width=944,height=452,rightbottom='rightbottom',autoresize='false',visible='vlc.hasVout')
 image(layout,'panel',0,0,960,48,rb='righttop',action='move',action2='main.maximize()',visible='not main.isMaximized')
 image(layout,'panel',0,0,960,48,rb='righttop',action='move',action2='main.unmaximize()',visible='main.isMaximized')

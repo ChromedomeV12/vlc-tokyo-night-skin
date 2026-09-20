@@ -167,7 +167,6 @@
   <Window id="main" x="160" y="100" dragdrop="true" playondrop="true">
     <Layout id="mainLayout" width="960" height="644" minwidth="800" minheight="470" maxwidth="7680" maxheight="4320">
       <Image image="bg" x="0" y="0" lefttop="lefttop" rightbottom="rightbottom" width="960" height="644"/>
-      <Image image="idle" x="8" y="48" lefttop="lefttop" rightbottom="rightbottom" resize="scale2" visible="not vlc.hasVout" width="944" height="452"/>
       <Video x="8" y="48" width="944" height="452" rightbottom="rightbottom" autoresize="false" visible="vlc.hasVout"/>
       <Image image="panel" x="0" y="0" lefttop="lefttop" rightbottom="righttop" action="move" action2="main.maximize()" visible="not main.isMaximized" width="960" height="48"/>
       <Image image="panel" x="0" y="0" lefttop="lefttop" rightbottom="righttop" action="move" action2="main.unmaximize()" visible="main.isMaximized" width="960" height="48"/>

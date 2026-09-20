@@ -72,6 +72,8 @@ python tools/verify_resize_windows.py --media path/to/test-video.mp4
 
 This integration check sends mouse messages to its own VLC windows and verifies right-edge, bottom-edge, and corner drags in both directions, including minimum sizes, for the player and playlist.
 
+For a short resize performance measurement, run `python tools/verify_resize_windows.py --benchmark --media path/to/test-video.mp4`. This reports mouse-message handling latency, not display frame rate. Backgrounds use large solid tiles because VLC's default mosaic mode draws every tile individually; tiny tiles make resizing expensive.
+
 To check the seek bar's fill and handle alignment at multiple positions and window widths:
 
 ```sh
@@ -79,6 +81,8 @@ python tools/verify_seek_windows.py --media path/to/test-video.mp4
 ```
 
 This check uses a seekable video, pauses playback, and examines VLC's rendered pixels after seeking. It also checks clicks above and below the thin track.
+
+Planned work and priorities are tracked in [TODO.md](TODO.md).
 
 ## Credits
 

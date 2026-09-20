@@ -1,6 +1,6 @@
 import ctypes as c
 from ctypes import wintypes as w
-import argparse,os,subprocess,time,sys
+import argparse,os,subprocess,time,sys,statistics
 from pathlib import Path
 
 if sys.platform!='win32':
@@ -9,6 +9,7 @@ parser=argparse.ArgumentParser(description='Check real VLC skin resizing with Wi
 parser.add_argument('skin',nargs='?',type=Path,default=Path(__file__).resolve().parent.parent/'dist/Tokyo-Night-Dark.vlt')
 parser.add_argument('--vlc',type=Path,default=Path(os.environ.get('ProgramFiles','C:/Program Files'))/'VideoLAN/VLC/vlc.exe')
 parser.add_argument('--media',type=Path,help='Optional video to check resizing during playback; audio is disabled.')
+parser.add_argument('--benchmark',action='store_true',help='Measure a short right-edge drag instead of the full resize checks.')
 args=parser.parse_args()
 if args.media and not args.media.is_file():
     parser.error('The supplied video file does not exist.')
@@ -19,8 +20,11 @@ u.GetClientRect.argtypes=[w.HWND,c.POINTER(w.RECT)]
 u.GetWindowRect.argtypes=[w.HWND,c.POINTER(w.RECT)]
 def size(h):
     r=w.RECT();u.GetClientRect(h,c.byref(r));return r.right,r.bottom
+resize_times=[]
 def send(h,msg,x,y,flags=0):
+    start=time.perf_counter()
     u.SendMessageW(h,msg,flags,((y&65535)<<16)|(x&65535))
+    if msg==0x200 and flags==1:resize_times.append((time.perf_counter()-start)*1000)
 def drag(h,x,y,dx,dy):
     before=size(h)
     send(h,0x200,x,y)
@@ -54,6 +58,13 @@ try:
         time.sleep(.1)
     assert h,'Skin main window not found'
     time.sleep(.5)
+    if args.benchmark:
+        for delta in (160,-160):
+            width,height=size(h)
+            before,after=drag(h,width-3,height//2,delta,0)
+            assert after==(before[0]+delta,before[1]),(before,after)
+        print(f'Resize mouse-message processing: median {statistics.median(resize_times):.1f} ms, max {max(resize_times):.1f} ms ({len(resize_times)} moves).',flush=True)
+        raise SystemExit(0)
     original=size(h)
     for _ in range(2):
         send(h,0x200,650,24);send(h,0x203,650,24);time.sleep(.4)
