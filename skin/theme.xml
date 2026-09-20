@@ -108,6 +108,7 @@
   <Bitmap id="resize" file="resize.png" alphacolor="#ff00ff"/>
   <Bitmap id="seek" file="seek.png" alphacolor="#ff00ff"/>
   <Bitmap id="volume_track" file="volume_track.png" alphacolor="#ff00ff"/>
+  <Bitmap id="invisible" file="invisible.png" alphacolor="#ff00ff"/>
   <PopupMenu id="media_menu">
     <MenuItem label="Open File..." action="dialogs.fileSimple()"/>
     <MenuItem label="Open Multiple Files..." action="dialogs.file()"/>
@@ -187,9 +188,10 @@
       <Image image="line" x="0" y="500" lefttop="leftbottom" rightbottom="rightbottom" width="960" height="1"/>
       <Text text="$T" x="28" y="516" width="100" font="defaultfont" color="#9aa5ce" lefttop="leftbottom" rightbottom="leftbottom" focus="false"/>
       <Text text="$D" x="820" y="516" width="112" font="defaultfont" color="#9aa5ce" lefttop="rightbottom" rightbottom="rightbottom" focus="false" alignment="right"/>
-      <Slider x="28" y="541" points="(7,8),(897,8)" up="knob" over="knob_over" down="knob_over" value="time" thickness="18" lefttop="leftbottom" rightbottom="rightbottom" tooltiptext="Seek: $T / $D" visible="vlc.isSeekable">
-        <SliderBackground image="seek" nbvert="101"/>
+      <Slider x="35" y="548" points="(0,1),(890,1)" up="invisible" value="time" lefttop="leftbottom" rightbottom="rightbottom" visible="vlc.isSeekable">
+        <SliderBackground image="seek" nbvert="2001"/>
       </Slider>
+      <Slider x="35" y="549" points="(0,0),(890,0)" up="knob" over="knob_over" down="knob_over" thickness="18" tooltiptext="Seek: $T / $D" value="time" lefttop="leftbottom" rightbottom="rightbottom" visible="vlc.isSeekable"/>
       <Image image="line" x="35" y="548" lefttop="leftbottom" rightbottom="rightbottom" visible="not vlc.isSeekable" width="890" height="2"/>
       <Button x="22" y="574" up="open_up" over="open_over" down="open_down" action="dialogs.fileSimple()" tooltiptext="Open media" lefttop="leftbottom" rightbottom="leftbottom"/>
       <Checkbox x="82" y="574" state="vlc.isPlaying" up1="play_up" over1="play_over" down1="play_down" up2="pause_up" over2="pause_over" down2="pause_down" action1="vlc.play()" action2="vlc.pause()" tooltiptext1="Play" tooltiptext2="Pause" lefttop="leftbottom" rightbottom="leftbottom"/>
@@ -200,9 +202,10 @@
       <Checkbox x="330" y="574" state="playlist.isLoop" up1="repeat_up" over1="repeat_over" down1="repeat_down" up2="repeat_on_up" over2="repeat_on_over" down2="repeat_on_down" action1="playlist.setLoop(true)" action2="playlist.setLoop(false)" tooltiptext1="Loop playlist" tooltiptext2="Disable loop" lefttop="leftbottom" rightbottom="leftbottom"/>
       <Checkbox x="374" y="574" state="queue.isVisible" up1="playlist_up" over1="playlist_over" down1="playlist_down" up2="playlist_on_up" over2="playlist_on_over" down2="playlist_on_down" action1="queue.show()" action2="queue.hide()" tooltiptext1="Show playlist" tooltiptext2="Hide playlist" lefttop="leftbottom" rightbottom="leftbottom"/>
       <Checkbox x="694" y="574" state="vlc.isMute" up1="volume_up" over1="volume_over" down1="volume_down" up2="mute_up" over2="mute_over" down2="mute_down" action1="vlc.mute()" action2="vlc.mute()" tooltiptext1="Mute" tooltiptext2="Unmute" lefttop="rightbottom" rightbottom="rightbottom"/>
-      <Slider x="742" y="586" points="(7,8),(109,8)" up="vol_knob" over="knob_over" value="volume" thickness="18" lefttop="rightbottom" rightbottom="rightbottom" tooltiptext="Volume: $V%">
-        <SliderBackground image="volume_track" nbvert="101"/>
+      <Slider x="749" y="593" points="(0,1),(102,1)" up="invisible" value="volume" lefttop="rightbottom" rightbottom="rightbottom" visible="true">
+        <SliderBackground image="volume_track" nbvert="257"/>
       </Slider>
+      <Slider x="749" y="594" points="(0,0),(102,0)" up="vol_knob" over="knob_over" down="knob_over" thickness="18" tooltiptext="Volume: $V%" value="volume" lefttop="rightbottom" rightbottom="rightbottom" visible="true"/>
       <Button x="884" y="574" up="fullscreen_up" over="fullscreen_over" down="fullscreen_down" action="vlc.fullscreen()" tooltiptext="Fullscreen (F / Esc)" lefttop="rightbottom" rightbottom="rightbottom"/>
       <Image image="panel" x="952" y="48" lefttop="righttop" rightbottom="rightbottom" action="resizeE" help="Drag right edge to resize width" width="8" height="568"/>
       <Image image="panel" x="0" y="636" lefttop="leftbottom" rightbottom="rightbottom" action="resizeS" help="Drag bottom edge to resize height" width="932" height="8"/>
@@ -234,9 +237,10 @@
       <Image image="line" x="0" y="0" lefttop="leftbottom" rightbottom="rightbottom" width="960" height="1"/>
       <Text text="$T" x="28" y="16" width="100" font="defaultfont" color="#9aa5ce" lefttop="leftbottom" rightbottom="leftbottom" focus="false"/>
       <Text text="$D" x="820" y="16" width="112" font="defaultfont" color="#9aa5ce" lefttop="rightbottom" rightbottom="rightbottom" focus="false" alignment="right"/>
-      <Slider x="28" y="41" points="(7,8),(897,8)" up="knob" over="knob_over" down="knob_over" value="time" thickness="18" lefttop="leftbottom" rightbottom="rightbottom" tooltiptext="Seek: $T / $D" visible="vlc.isSeekable">
-        <SliderBackground image="seek" nbvert="101"/>
+      <Slider x="35" y="48" points="(0,1),(890,1)" up="invisible" value="time" lefttop="leftbottom" rightbottom="rightbottom" visible="vlc.isSeekable">
+        <SliderBackground image="seek" nbvert="2001"/>
       </Slider>
+      <Slider x="35" y="49" points="(0,0),(890,0)" up="knob" over="knob_over" down="knob_over" thickness="18" tooltiptext="Seek: $T / $D" value="time" lefttop="leftbottom" rightbottom="rightbottom" visible="vlc.isSeekable"/>
       <Image image="line" x="35" y="48" lefttop="leftbottom" rightbottom="rightbottom" visible="not vlc.isSeekable" width="890" height="2"/>
       <Button x="22" y="74" up="open_up" over="open_over" down="open_down" action="dialogs.fileSimple()" tooltiptext="Open media" lefttop="leftbottom" rightbottom="leftbottom"/>
       <Checkbox x="82" y="74" state="vlc.isPlaying" up1="play_up" over1="play_over" down1="play_down" up2="pause_up" over2="pause_over" down2="pause_down" action1="vlc.play()" action2="vlc.pause()" tooltiptext1="Play" tooltiptext2="Pause" lefttop="leftbottom" rightbottom="leftbottom"/>
@@ -247,9 +251,10 @@
       <Checkbox x="330" y="74" state="playlist.isLoop" up1="repeat_up" over1="repeat_over" down1="repeat_down" up2="repeat_on_up" over2="repeat_on_over" down2="repeat_on_down" action1="playlist.setLoop(true)" action2="playlist.setLoop(false)" tooltiptext1="Loop playlist" tooltiptext2="Disable loop" lefttop="leftbottom" rightbottom="leftbottom"/>
       <Checkbox x="374" y="74" state="queue.isVisible" up1="playlist_up" over1="playlist_over" down1="playlist_down" up2="playlist_on_up" over2="playlist_on_over" down2="playlist_on_down" action1="queue.show()" action2="queue.hide()" tooltiptext1="Show playlist" tooltiptext2="Hide playlist" lefttop="leftbottom" rightbottom="leftbottom"/>
       <Checkbox x="694" y="74" state="vlc.isMute" up1="volume_up" over1="volume_over" down1="volume_down" up2="mute_up" over2="mute_over" down2="mute_down" action1="vlc.mute()" action2="vlc.mute()" tooltiptext1="Mute" tooltiptext2="Unmute" lefttop="rightbottom" rightbottom="rightbottom"/>
-      <Slider x="742" y="86" points="(7,8),(109,8)" up="vol_knob" over="knob_over" value="volume" thickness="18" lefttop="rightbottom" rightbottom="rightbottom" tooltiptext="Volume: $V%">
-        <SliderBackground image="volume_track" nbvert="101"/>
+      <Slider x="749" y="93" points="(0,1),(102,1)" up="invisible" value="volume" lefttop="rightbottom" rightbottom="rightbottom" visible="true">
+        <SliderBackground image="volume_track" nbvert="257"/>
       </Slider>
+      <Slider x="749" y="94" points="(0,0),(102,0)" up="vol_knob" over="knob_over" down="knob_over" thickness="18" tooltiptext="Volume: $V%" value="volume" lefttop="rightbottom" rightbottom="rightbottom" visible="true"/>
       <Button x="884" y="74" up="fullscreen_up" over="fullscreen_over" down="fullscreen_down" action="vlc.fullscreen()" tooltiptext="Fullscreen (F / Esc)" lefttop="rightbottom" rightbottom="rightbottom"/>
     </Layout>
   </Window>

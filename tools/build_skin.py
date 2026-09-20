@@ -116,14 +116,25 @@ im,d=canvas(12,34);rect(d,(3,0,9,33),C['muted'],3);save('scroll',im)
 im,d=canvas(28,28,C['panel'])
 for n in (10,16,22): line(d,[(n,24),(24,n)],C['muted'],1)
 save('resize',im)
-# Filled tracks in 101 frames, with the handle centered on the line.
-for name,w,col in [('seek',904,C['blue']),('volume_track',116,C['purple'])]:
-    im,d=canvas(w,16*101)
-    for i in range(101):
-        y=i*16+7
-        rect(d,(7,y,w-7,y+2),C['line'],1)
-        if i: rect(d,(7,y,7+(w-14)*i/100,y+2),col,1)
-    save(name,im)
+# Use dense, three-pixel-high track frames. The previous 101-frame atlas
+# rounded progress down to whole percentages, visibly trailing the handle.
+# A separate interactive slider keeps a generous hit area and fixed-size knob
+# without stretching tall, mostly transparent atlases on every window resize.
+SEEK_FRAMES = 2001
+VOLUME_FRAMES = 257
+for name,width,frames,col in [('seek',891,SEEK_FRAMES,C['blue']),
+                              ('volume_track',103,VOLUME_FRAMES,C['purple'])]:
+    im=Image.new('RGBA',(width,3*frames),C['panel'])
+    d=ImageDraw.Draw(im)
+    for i in range(frames):
+        y=3*i+1
+        d.line((0,y,width-1,y),fill=C['line'],width=1)
+        if i:
+            endpoint=round((width-1)*i/(frames-1))
+            d.line((0,y,endpoint,y),fill=col,width=1)
+    im.save(SKIN/(name+'.png'));assets[name]=im
+im,d=canvas(1,1)
+save('invisible',im)
 
 theme=E.Element('Theme',version='2.0',magnet='12')
 def el(parent,tag,**kw): return E.SubElement(parent,tag,**{k:str(v) for k,v in kw.items()})
@@ -180,13 +191,25 @@ def resize_handles(parent,width,height):
           action='resizeS',help='Drag bottom edge to resize height')
     image(parent,'resize',width-28,height-28,lt='rightbottom',
           action='resizeSE',help='Drag corner to resize width and height')
+def progress_slider(parent,value,x,y,length,track,frames,knob,tooltip,
+                    lt='leftbottom',rb='rightbottom',visible='true'):
+    shared=dict(value=value,lefttop=lt,rightbottom=rb,visible=visible)
+    # Both curves have the same width (length + 1), so VLC applies the same
+    # horizontal resize factor to the fill and the handle. Track y=1 and
+    # handle y=0 keep both centers at the supplied absolute y coordinate.
+    background=el(parent,'Slider',x=x,y=y-1,points=f'(0,1),({length},1)',
+                  up='invisible',**shared)
+    el(background,'SliderBackground',image=track,nbvert=frames)
+    el(parent,'Slider',x=x,y=y,points=f'(0,0),({length},0)',up=knob,
+       over='knob_over',down='knob_over',thickness=18,
+       tooltiptext=tooltip,**shared)
 def controls(p,y):
     image(p,'panel',0,y,960,144,lt='leftbottom',rb='rightbottom',action='move')
     image(p,'line',0,y,960,1,lt='leftbottom',rb='rightbottom')
     text(p,'$T',28,y+16,100,'muted','leftbottom')
     text(p,'$D',820,y+16,112,'muted','rightbottom',alignment='right')
-    slider=el(p,'Slider',x=28,y=y+41,points='(7,8),(897,8)',up='knob',over='knob_over',down='knob_over',value='time',thickness=18,lefttop='leftbottom',rightbottom='rightbottom',tooltiptext='Seek: $T / $D',visible='vlc.isSeekable')
-    el(slider,'SliderBackground',image='seek',nbvert=101)
+    progress_slider(p,'time',35,y+49,890,'seek',SEEK_FRAMES,'knob',
+                    'Seek: $T / $D',visible='vlc.isSeekable')
     image(p,'line',35,y+48,890,2,lt='leftbottom',rb='rightbottom',visible='not vlc.isSeekable')
     cy=y+74
     button(p,'open',22,cy,'dialogs.fileSimple()','Open media','leftbottom')
@@ -198,8 +221,8 @@ def controls(p,y):
     check(p,'repeat','repeat_on',330,cy,'playlist.isLoop','playlist.setLoop(true)','playlist.setLoop(false)','Loop playlist','Disable loop','leftbottom')
     check(p,'playlist','playlist_on',374,cy,'queue.isVisible','queue.show()','queue.hide()','Show playlist','Hide playlist','leftbottom')
     check(p,'volume','mute',694,cy,'vlc.isMute','vlc.mute()','vlc.mute()','Mute','Unmute','rightbottom')
-    vol=el(p,'Slider',x=742,y=cy+12,points='(7,8),(109,8)',up='vol_knob',over='knob_over',value='volume',thickness=18,lefttop='rightbottom',rightbottom='rightbottom',tooltiptext='Volume: $V%')
-    el(vol,'SliderBackground',image='volume_track',nbvert=101)
+    progress_slider(p,'volume',749,cy+20,102,'volume_track',VOLUME_FRAMES,
+                    'vol_knob','Volume: $V%',lt='rightbottom')
     button(p,'fullscreen',884,cy,'vlc.fullscreen()','Fullscreen (F / Esc)','rightbottom')
 
 win=el(theme,'Window',id='main',x=160,y=100,dragdrop='true',playondrop='true')

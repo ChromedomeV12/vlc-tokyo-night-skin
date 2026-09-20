@@ -72,6 +72,14 @@ python tools/verify_resize_windows.py --media path/to/test-video.mp4
 
 This integration check sends mouse messages to its own VLC windows and verifies right-edge, bottom-edge, and corner drags in both directions, including minimum sizes, for the player and playlist.
 
+To check the seek bar's fill and handle alignment at multiple positions and window widths:
+
+```sh
+python tools/verify_seek_windows.py --media path/to/test-video.mp4
+```
+
+This check uses a seekable video, pauses playback, and examines VLC's rendered pixels after seeking. It also checks clicks above and below the thin track.
+
 ## Credits
 
 - Palette: [Tokyo Night](https://github.com/tokyo-night/tokyo-night-vscode-theme), originally by enkia.
