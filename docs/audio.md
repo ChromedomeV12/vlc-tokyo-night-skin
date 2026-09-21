@@ -10,7 +10,7 @@ Start with Preamp at 0 dB or below, then raise 60 Hz and 170 Hz slightly for bas
 
 ## Visualizations
 
-The complete ZIP includes **Waves** (blue) and **Orbit** (purple) projectM presets. Both use the Tokyo Night background and projectM's built-in audio-reactive waveforms. There are no external textures or shaders.
+The complete ZIP includes **Waves** (blue `#7aa2f7`) and **Orbit** (purple `#bb9af7`) projectM presets. Both use the Tokyo Night Dark background (`#1a1b26`) and projectM's built-in audio-reactive waveforms. The background covers wide windows and keeps its color during preset transitions. There are no external textures or shaders.
 
 **Try immediately on Windows:** extract the whole ZIP and drop an audio file onto `Try-Tokyo-Night-Music.cmd`. It starts a separate VLC instance with the visualization enabled. The ordinary skin launcher continues to use your existing visualization preference.
 
@@ -25,7 +25,7 @@ With both presets in the directory, VLC's projectM integration cycles them appro
 
 ![Orbit in VLC](visualization-orbit.png)
 
-**Customize:** edit the `.milk` files or `tools/build_visualizations.py` and regenerate them. `wave_r`, `wave_g`, and `wave_b` use RGB values divided by 255; `fWaveScale` controls movement strength. Keep global preset fields before shape fields for VLC's legacy projectM parser. Restart playback after editing.
+**Customize:** edit the `.milk` files or `tools/build_visualizations.py` and regenerate them. `wave_r`, `wave_g`, and `wave_b` use RGB values divided by 255; `fWaveScale` controls movement strength. Both sets of `shapecode_0_r/g/b` and `shapecode_0_r2/g2/b2` specify the background. Keep its additive blending and zero feedback (`fDecay=0`) together so transitions do not darken the canvas. Keep global preset fields before shape fields for VLC's legacy projectM parser. Fully restart VLC after replacing presets to reload cached copies.
 
 **Restore:** select Disable in Audio → Visualizations. Reset the projectM preset path to its previous folder (or clear it for VLC's default). The installer does not turn projectM on globally, so normal video playback keeps the existing behavior.
 

@@ -20,6 +20,7 @@
 - [x] Add blue Waves and purple Orbit on the Tokyo Night background without branding, captions, or emojis.
 - [x] Use the installed projectM plugin; verify loading, visible animation and embedded rendering during resize in VLC 3.0.23 on Windows.
 - [x] Document preset selection, customization, disabling and restoring the previous preset path.
+- [x] Fix black edges in wide visualization windows and background darkening during preset transitions; verify rendered RGB against `#1a1b26`.
 
 ## Follow-up validation
 

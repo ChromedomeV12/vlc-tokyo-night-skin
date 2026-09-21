@@ -47,12 +47,12 @@ ib_a=0.000000
 mv_a=0.000000
 shapecode_0_enabled=1
 shapecode_0_sides=4
-shapecode_0_additive=0
+shapecode_0_additive=1
 shapecode_0_thickOutline=0
 shapecode_0_textured=0
 shapecode_0_x=0.500000
 shapecode_0_y=0.500000
-shapecode_0_rad=8.000000
+shapecode_0_rad=100.000000
 shapecode_0_ang=0.000000
 shapecode_0_r=0.101961
 shapecode_0_g=0.105882
@@ -65,7 +65,10 @@ shapecode_0_a2=1.000000
 shapecode_0_border_a=0.000000
 '''
 
-# The full-screen shape replaces feedback with the Tokyo Night background.
+# With zero feedback, the additive background paints exact #1a1b26 onto black.
+# During preset transitions projectM scales both shapes' alpha: adding their
+# contributions preserves the color, whereas normal alpha blending darkens it.
+# The oversized quad also covers extreme aspect ratios after native resizing.
 # Use projectM's built-in audio waveforms; no text, textures, or shaders.
 # Global fields must precede shape fields in the legacy preset parser.
 waves = BASE.replace('nWaveMode=0','nWaveMode=6')
