@@ -21,6 +21,7 @@
 - [x] Use the installed projectM plugin; verify loading, visible animation and embedded rendering during resize in VLC 3.0.23 on Windows.
 - [x] Document preset selection, customization, disabling and restoring the previous preset path.
 - [x] Fix black edges in wide visualization windows and background darkening during preset transitions; verify rendered RGB against `#1a1b26`.
+- [x] Smooth motion between audio blocks with native preset equations; observe Waves above the user's 30 FPS target and reduce unnecessary feedback mesh work.
 
 ## Follow-up validation
 

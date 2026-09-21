@@ -10,14 +10,14 @@ Start with Preamp at 0 dB or below, then raise 60 Hz and 170 Hz slightly for bas
 
 ## Visualizations
 
-The complete ZIP includes **Waves** (blue `#7aa2f7`) and **Orbit** (purple `#bb9af7`) projectM presets. Both use the Tokyo Night Dark background (`#1a1b26`) and projectM's built-in audio-reactive waveforms. The background covers wide windows and keeps its color during preset transitions. There are no external textures or shaders.
+The complete ZIP includes **Waves** (blue `#7aa2f7`) and **Orbit** (purple `#bb9af7`) projectM presets. Both use the Tokyo Night Dark background (`#1a1b26`) and native projectM equations to draw smooth curves that respond to bass and treble energy. Their motion continues between incoming audio blocks; they are stylized visualizations, not sample-accurate oscilloscopes. The background covers wide windows and keeps its color during preset transitions. There are no external textures or shaders.
 
 **Try immediately on Windows:** extract the whole ZIP and drop an audio file onto `Try-Tokyo-Night-Music.cmd`. It starts a separate VLC instance with the visualization enabled. The ordinary skin launcher continues to use your existing visualization preference.
 
 **Use from VLC's own menu:**
 
 1. Open Preferences and select **All** settings.
-2. Go to **Audio → Visualizations → projectM** and select the included `visualizations` directory as the preset path. Set texture size to **512** for these simple presets.
+2. Go to **Audio → Visualizations → projectM** and select the included `visualizations` directory as the preset path. Set texture size to **512**, mesh width to **8**, and mesh height to **6**. These presets do not deform the feedback mesh, so a dense mesh is unnecessary.
 3. Save and fully restart VLC.
 4. Play music, open **Audio → Audio Options → Visualizations → projectM**. Choose **Disable** in the same submenu to turn it off.
 
@@ -25,7 +25,9 @@ With both presets in the directory, VLC's projectM integration cycles them appro
 
 ![Orbit in VLC](visualization-orbit.png)
 
-**Customize:** edit the `.milk` files or `tools/build_visualizations.py` and regenerate them. `wave_r`, `wave_g`, and `wave_b` use RGB values divided by 255; `fWaveScale` controls movement strength. Both sets of `shapecode_0_r/g/b` and `shapecode_0_r2/g2/b2` specify the background. Keep its additive blending and zero feedback (`fDecay=0`) together so transitions do not darken the canvas. Keep global preset fields before shape fields for VLC's legacy projectM parser. Fully restart VLC after replacing presets to reload cached copies.
+**Motion and performance:** each curve has 256 points. Native per-frame equations smooth bass and treble energy; point equations animate continuously using projectM's clock. Six-second Windows screen-capture tests at 960×644 observed roughly 35–38 visible updates per second for Waves and 36 for Orbit, versus 19–20 for the previous raw waveform. These are screen-capture observations, not a guaranteed FPS on every device. There is no preset-level 30 FPS limiter; the goal is fluid motion at or above 30 FPS without changing VLC's playback engine.
+
+**Customize:** edit the `.milk` files or `tools/build_visualizations.py` and regenerate them. `wavecode_0_r/g/b` use RGB values divided by 255; the point equations control curve amplitude and movement. Both sets of `shapecode_0_r/g/b` and `shapecode_0_r2/g2/b2` specify the background. Keep its additive blending and zero feedback (`fDecay=0`) together so transitions do not darken the canvas. Keep global preset fields before shape and wave fields for VLC's legacy projectM parser. Fully restart VLC after replacing presets to reload cached copies.
 
 **Restore:** select Disable in Audio → Visualizations. Reset the projectM preset path to its previous folder (or clear it for VLC's default). The installer does not turn projectM on globally, so normal video playback keeps the existing behavior.
 
