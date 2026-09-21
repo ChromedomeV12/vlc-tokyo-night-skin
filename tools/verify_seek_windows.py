@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+import tempfile
 from PIL import Image
 
 if sys.platform != 'win32':
@@ -20,6 +21,7 @@ args=parser.parse_args()
 if not args.media.is_file():parser.error('Test video does not exist.')
 if args.captures:args.captures.mkdir(parents=True,exist_ok=True)
 u=c.WinDLL('user32');g=c.WinDLL('gdi32')
+u.SetProcessDPIAware()
 u.SendMessageW.argtypes=[w.HWND,w.UINT,w.WPARAM,w.LPARAM];u.SendMessageW.restype=w.LPARAM
 u.GetWindowDC.argtypes=[w.HWND];u.GetWindowDC.restype=w.HDC
 u.GetClientRect.argtypes=[w.HWND,c.POINTER(w.RECT)]
@@ -51,7 +53,8 @@ def blue(pixel):
     r,g,b=pixel
     return b>180 and g>90 and b-r>55 and b-g>15
 si=subprocess.STARTUPINFO();si.dwFlags=subprocess.STARTF_USESHOWWINDOW;si.wShowWindow=0
-p=subprocess.Popen([str(args.vlc),'--no-one-instance','--ignore-config','--no-save-config','--no-media-library',
+test_profile=tempfile.TemporaryDirectory(prefix='vlc-tokyo-night-test-')
+p=subprocess.Popen([str(args.vlc),'--no-one-instance','--ignore-config','--config='+str(Path(test_profile.name)/'vlcrc'),'--no-media-library',
                     '--intf=skins2','--skins2-last='+str(args.skin.resolve()),'--no-qt-privacy-ask',
                     '--no-qt-updates-notif','--no-audio',str(args.media.resolve())],startupinfo=si)
 try:
@@ -62,7 +65,7 @@ try:
         cls=c.create_unicode_buffer(200);u.GetClassNameW(h,cls,200)
         if pid.value==p.pid and cls.value=='SkinWindowClass' and size(h)==(960,644):found.append(h)
         return True
-    for _ in range(60):
+    for _ in range(150):
         u.EnumWindows(cb,0)
         if found:break
         time.sleep(.1)
@@ -109,3 +112,4 @@ try:
     print('PASS: fill stays joined to the handle across seek positions and window widths.',flush=True)
 finally:
     p.terminate();p.wait(timeout=5)
+    test_profile.cleanup()

@@ -1,6 +1,6 @@
 import ctypes as c
 from ctypes import wintypes as w
-import argparse,os,subprocess,time,sys,statistics
+import argparse,os,subprocess,time,sys,statistics,tempfile
 from pathlib import Path
 
 if sys.platform!='win32':
@@ -14,6 +14,7 @@ args=parser.parse_args()
 if args.media and not args.media.is_file():
     parser.error('The supplied video file does not exist.')
 u=c.WinDLL('user32',use_last_error=True)
+u.SetProcessDPIAware()
 u.SendMessageW.argtypes=[w.HWND,w.UINT,w.WPARAM,w.LPARAM]
 u.SendMessageW.restype=w.LPARAM
 u.GetClientRect.argtypes=[w.HWND,c.POINTER(w.RECT)]
@@ -36,7 +37,8 @@ def drag(h,x,y,dx,dy):
     return before,size(h)
 si=subprocess.STARTUPINFO();si.dwFlags=subprocess.STARTF_USESHOWWINDOW;si.wShowWindow=0
 skin=args.skin.resolve()
-command=[str(args.vlc),'--no-one-instance','--ignore-config','--no-save-config','--no-media-library','--intf=skins2','--skins2-last='+str(skin),'--no-qt-privacy-ask','--no-qt-updates-notif','--no-audio']
+test_profile=tempfile.TemporaryDirectory(prefix='vlc-tokyo-night-test-')
+command=[str(args.vlc),'--no-one-instance','--ignore-config','--config='+str(Path(test_profile.name)/'vlcrc'),'--no-media-library','--intf=skins2','--skins2-last='+str(skin),'--no-qt-privacy-ask','--no-qt-updates-notif','--no-audio']
 if args.media:command+=['--input-repeat=10',str(args.media.resolve())]
 p=subprocess.Popen(command,startupinfo=si)
 def windows():
@@ -51,7 +53,7 @@ def windows():
     u.EnumWindows(cb,0);return found
 try:
     h=None
-    for _ in range(50):
+    for _ in range(150):
         candidates=windows()
         h=next((x for x in candidates if size(x)==(960,644)),None)
         if h:break
@@ -93,3 +95,4 @@ try:
     print('PASS: both windows grow, shrink, and respect minimum dimensions.',flush=True)
 finally:
     p.terminate();p.wait(timeout=5)
+    test_profile.cleanup()

@@ -12,6 +12,8 @@ A VLC skin using the Tokyo Night palette, with a plain video area, horizontal me
 
 **Make it the default:** In VLC, open **Tools → Preferences → Interface → Use custom skin**, choose `Tokyo-Night-Dark.vlt`, save, then fully quit and reopen VLC. Keep the skin file at the selected location.
 
+The normal Start menu shortcut uses that saved preference. Preview launchers use separate temporary preference files; changes made in a preview do not set your normal VLC default. If the theme disappears after a preferences reset, select the custom skin again in your regular VLC instance.
+
 **Linux:** Select the `.vlt` file in VLC's Interface preferences. Your VLC build must include Skins2 support. The Windows launcher is not needed.
 
 To return to the standard interface, open Preferences, select **Use native style**, save, and restart VLC.

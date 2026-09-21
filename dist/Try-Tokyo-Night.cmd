@@ -7,4 +7,6 @@ if not exist "%VLC_EXE%" (
   pause
   exit /b 1
 )
-start "" "%VLC_EXE%" --no-one-instance --no-save-config --intf=skins2 --skins2-last="%~dp0Tokyo-Night-Dark.vlt" %*
+set "PREVIEW_CONFIG=%TEMP%\vlc-tokyo-night-preview-%RANDOM%-%RANDOM%.ini"
+if exist "%APPDATA%\vlc\vlcrc" (copy /y "%APPDATA%\vlc\vlcrc" "%PREVIEW_CONFIG%" >nul) else (type nul > "%PREVIEW_CONFIG%")
+start "" "%VLC_EXE%" --no-one-instance --config="%PREVIEW_CONFIG%" --intf=skins2 --skins2-last="%~dp0Tokyo-Night-Dark.vlt" %*
